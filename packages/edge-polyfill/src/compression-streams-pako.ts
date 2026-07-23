@@ -10,7 +10,7 @@ class PakoStream<S extends pako.Deflate | pako.Inflate> extends TransformStream<
       {
         start: controller => {
           compressor.onData = dat => {
-            controller.enqueue(dat);
+            controller.enqueue(dat as ArrayBuffer);
           };
 
           compressor.onEnd = status => {

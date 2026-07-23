@@ -1,5 +1,6 @@
 import type * as tar from "tar-stream";
 import { StringDecoder } from "@gitpkg/edge-polyfill/dist/string_decoder.js";
+import { Readable } from "node:stream";
 
 declare module "tar-stream" {
   interface Headers {
@@ -51,7 +52,7 @@ export function entryAsStream(
 ): import("stream").Readable | undefined {
   switch (e.kind) {
     case "tar-stream":
-      return e.entry;
+      return new Readable().wrap(e.entry);
     case "decoded":
       return undefined;
     case "stream":
@@ -108,7 +109,7 @@ type HybridContent =
 export function contentOfEntry(entry: HybridEntry): HybridContent {
   switch (entry.kind) {
     case "tar-stream":
-      return { kind: "stream", content: entry.entry };
+      return { kind: "stream", content: new Readable().wrap(entry.entry) };
     case "decoded":
       return { kind: "decoded", content: entry.entry.content };
     case "stream":

@@ -9,5 +9,6 @@
     { "path": "./packages/core" },
     { "path": "./packages/edge-polyfill" }
   ],
-  "include": ["api/**/*", "*.ts"]
+  "include": ["api/**/*", "*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

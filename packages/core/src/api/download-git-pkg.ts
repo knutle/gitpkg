@@ -22,6 +22,8 @@ import {
   writableToWeb,
 } from "@gitpkg/edge-polyfill/dist/web-stream.js";
 
+import { Readable } from "node:stream";
+
 export type PipelineItem =
   | NodeJS.ReadableStream
   | NodeJS.WritableStream
@@ -65,7 +67,9 @@ export function downloadGitPkg(
     .pipeTo(writableToWeb(extract) as WritableStream<unknown>);
   const [p, packPromise] = pack(gen);
 
-  const pipeOut = (readableToWeb(p) satisfies ReadableStream)
+  const pipeOut = (
+    readableToWeb(new Readable().wrap(p)) satisfies ReadableStream
+  )
     .pipeThrough(new CompressionStream("gzip"))
     .pipeTo(writable);
   return Promise.all([pipe, packPromise, pipeOut]);
