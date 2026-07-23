@@ -118,15 +118,17 @@ export async function pkg({
         body:
           tgzResp.status === 404
             ? tgzResp.body
-              ? chainReadableStreams([
+              ? (chainReadableStreams([
                   new Blob([
                     Buffer.from(
                       `${tgzUrl} Not Found.\nThe original response body is:\n`,
-                    ),
-                  ]).stream(),
+                    ) as BlobPart,
+                  ]).stream() as ReadableStream<Uint8Array<ArrayBufferLike>>,
                   tgzResp.body,
-                ])
-              : new Blob([Buffer.from(`${tgzUrl} Not Found.`)]).stream()
+                ]) as ReadableStream<Uint8Array<ArrayBufferLike>>)
+              : (new Blob([
+                  Buffer.from(`${tgzUrl} Not Found.`) as BlobPart,
+                ]).stream() as ReadableStream<Uint8Array<ArrayBufferLike>>)
             : tgzResp.body,
       });
     }
